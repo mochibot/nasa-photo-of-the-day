@@ -10,7 +10,7 @@ function App() {
   const [date, setDate] = useState('')
 
   useEffect(() => {
-    axios.get(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY${date}`)
+    axios.get(`https://api.nasa.gov/planetary/apod?api_key=F2DZQ9hmcUVIKQxZ5bqZJc5D4nM6FeK6ToHhw5JR${date}`)
       .then(response => {
         console.log('fetch photo success: ', response)
         setData(response.data)
