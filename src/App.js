@@ -26,6 +26,7 @@ function App() {
     console.log(event.target.value);
   }
 
+  /*
   const dateRange = [];
   for (let i = 10; i >= 1; i--) {
     let today = new Date();
@@ -33,14 +34,19 @@ function App() {
     dateRange.unshift(newDate);
   }
   dateRange.unshift('today');
+  */
+  let today = new Date().toISOString().slice(0, 10)
 
   return (
     <div className="App">
       <h1>NASA Astronomy Picture of the Day</h1>
+      <input type='date' defaultValue={today} min='1995-06-16' max={today} onChange={changeDate}/>
+      {/*
       <select onChange={changeDate} defaultValue={date}>
         <option disabled>Select a date</option>
         {dateRange.map(item => item === 'today' ? <option key={item} value=''>{item}</option> : <option key={item} value={item} >{item}</option>)}
       </select>
+      */}
       {!data ? <div>Loading...</div> : <Content data={data}/>}
       {error && <div>Something went wrong...</div>}
     </div>
