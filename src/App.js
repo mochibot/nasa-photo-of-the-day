@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { DatePicker, Icon, Result, Typography, Layout } from 'antd';
+import moment from 'moment';
 
-import Content from './components/Content';
+import AppContent from './components/AppContent';
 import "./App.css";
+import 'antd/dist/antd.css';
+
+const { Title, Text } = Typography;
+const { Header, Content, Footer } = Layout;
 
 function App() {
   const [data, setData] = useState('');
@@ -21,9 +27,15 @@ function App() {
       })   
   }, [date])
 
-  const changeDate = (event) => {
-    setDate('&date=' + event.target.value);
-    console.log(event.target.value);
+  const changeDate = (dateObj, dateString) => {
+    //setDate('&date=' + event.target.value); 
+    let today = new Date().toISOString().slice(0, 10)
+    if (dateString === today) {
+      setDate('');
+    } else if (dateString !== '') {
+      setDate('&date=' + dateString);
+    }
+    console.log(date, dateString);
   }
 
   /*
@@ -35,20 +47,36 @@ function App() {
   }
   dateRange.unshift('today');
   */
-  let today = new Date().toISOString().slice(0, 10)
+  
+  const disabledDate = (date) => {
+    return date < moment("19950616", "YYYYMMDD") || date > moment().endOf('day')
+  }
 
   return (
     <div className="App">
-      <h1>NASA Astronomy Picture of the Day</h1>
-      <input type='date' defaultValue={today} min='1995-06-16' max={today} onChange={changeDate}/>
-      {/*
-      <select onChange={changeDate} defaultValue={date}>
-        <option disabled>Select a date</option>
-        {dateRange.map(item => item === 'today' ? <option key={item} value=''>{item}</option> : <option key={item} value={item} >{item}</option>)}
-      </select>
-      */}
-      {!data ? <div>Loading...</div> : <Content data={data}/>}
-      {error && <div>Something went wrong...</div>}
+      <Layout>
+        <Header>
+          <Title level={2} style={{color: 'white', padding: '9px'}}>NASA Astronomy Picture of the Day</Title>
+        </Header>
+        <Content>
+          <Text style={{fontSize: '20px', lineHeight: 2.5}}>Select another date to view more pictures</Text>
+          <br />
+          <DatePicker disabledDate={disabledDate} onChange={changeDate} style={{width: '278px'}}/>
+          {/*
+          <select onChange={changeDate} defaultValue={date}>
+            <option disabled>Select a date</option>
+            {dateRange.map(item => item === 'today' ? <option key={item} value=''>{item}</option> : <option key={item} value={item} >{item}</option>)}
+          </select>
+          */}
+          <br />
+          {!data ? <Icon type="sync" style={{ fontSize: 30, margin: '40px' }} spin /> : <AppContent data={data}/>}
+          <br />
+          {error && <Result status='warning' title='Something went wrong...'></Result>}
+        </Content>
+        <Footer style={{background: '#001529', color: 'white', fontSize: '20px'}}>
+          All images/videos obtained from <a href='https://api.nasa.gov/index.html'>api.nasa.gov</a>
+        </Footer>
+      </Layout>
     </div>
   );
 }
